@@ -18,6 +18,12 @@ public class HistorialIncidencia {
     private LocalDateTime fechaCambio;
 
 
-
+    public HistorialIncidencia(Long incidenciaId, String descripcionCambio, Estado estadoAnterior, Estado estadoNuevo) {
+        this.incidenciaId = incidenciaId;
+        this.descripcionCambio = descripcionCambio;
+        this.estadoAnterior = estadoAnterior;
+        this.estadoNuevo = estadoNuevo;
+        this.fechaCambio = LocalDateTime.now(); // Se asigna automáticamente
+    }
 
 }

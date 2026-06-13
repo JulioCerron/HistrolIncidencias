@@ -37,12 +37,12 @@ public class IncidenciasService implements RegistrarIncidenciaUseCase, Gestionar
         Incidencias actualizada = repositoryPort.guardar(incidencias);
 
         // 2. GUARDAMOS EL HISTORIAL
-        HistorialIncidencia historial = HistorialIncidencia.builder()
-                .incidenciaId(actualizada.getId())
-                .estadoAnterior(estadoAnterior)
-                .estadoNuevo(Estado.ASIGNADA)
-                .fechaCambio(LocalDateTime.now())
-                .build();
+        HistorialIncidencia historial = new HistorialIncidencia(
+                actualizada.getId(),
+                "Cambio de estado manual a " + nuevEstado, // Ahora ya no saldrá NULL
+                estadoAnterior,
+                nuevEstado // Usamos la variable, NO lo dejamos fijo en ASIGNADA
+        );
 
         historialRepositoryPort.guardar(historial);
 
@@ -103,11 +103,12 @@ public class IncidenciasService implements RegistrarIncidenciaUseCase, Gestionar
         Incidencias guaradada = repositoryPort.guardar(incidencias);
 
         // GUARDAMOS EL HISTORIAL DE CREACIÓN (Estado anterior es null porque recién nace)
-        HistorialIncidencia historial = HistorialIncidencia.builder()
-                .estadoNuevo(Estado.ASIGNADA)
-                .fechaCambio(LocalDateTime.now())
-                .build();
-
+        HistorialIncidencia historial = new HistorialIncidencia(
+                guaradada.getId(), // ¡Aquí capturamos el ID que la BD acaba de generar!
+                "Incidencia registrada en el sistema",
+                null, // Estado anterior no existe porque recién nace
+                Estado.REGISTRADA // Nace como REGISTRADA
+        );
         historialRepositoryPort.guardar(historial);
 
         eventPublisherPort.publicarIncidenteCreado(guaradada);
